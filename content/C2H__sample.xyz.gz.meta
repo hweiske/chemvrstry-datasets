@@ -1,0 +1,6 @@
+{
+  "name": "C2H+ sample",
+  "description": "Sample C2H+ energy grid (321x359) from the OpenAvatar repo",
+  "date": "2026-07-03",
+  "method": "DFT"
+}
