@@ -24,6 +24,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history for stable per-file git dates
+          lfs: true # raw/*.xyz are LFS objects
 
       - name: Build site (compress datasets, generate index.json)
         run: python3 build_site.py

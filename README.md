@@ -24,6 +24,11 @@ name:
 
 Without it, the filename is used and description/method stay empty.
 
+Large trajectories are stored via **Git LFS** (`raw/*.xyz` is tracked
+automatically by `.gitattributes`) — run `git lfs install` once on your
+machine before your first push, and clone with LFS available to get real
+files instead of pointers.
+
 ## Format
 
 Extended XYZ with grid metadata per block (`i:`/`j:` indices, `E:` energy in
