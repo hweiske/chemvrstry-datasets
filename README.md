@@ -6,9 +6,13 @@ Public potential energy surface (PES) datasets for the
 ## Publishing a dataset — just push it
 
 ```bash
-cp my_surface.xyz raw/
+cp my_surface.xyz raw/pes/    # or raw/stm/ for STM images
 git add raw/ && git commit -m "Add my_surface" && git push
 ```
+
+The folder sets the dataset's category — the app's PES mode lists
+`raw/pes/`, STM mode lists `raw/stm/` (files directly in `raw/` count as
+PES). Both categories share the same extended-XYZ grid format.
 
 That's everything. A GitHub Action compresses the file, regenerates the
 dataset index, and deploys to GitHub Pages — the dataset appears in the app
