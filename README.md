@@ -1,7 +1,7 @@
-# OpenAvatar Datasets
+# CHEMVRSTRY Datasets
 
 Public potential energy surface (PES) datasets for the
-[OpenAvatar](https://github.com/hweiske/open-avatar) VR visualization app.
+[CHEMVRSTRY](https://github.com/hweiske/chemvrstry) VR visualization app.
 
 ## Publishing a dataset — just push it
 
@@ -32,7 +32,7 @@ files instead of pointers.
 ## Format
 
 Extended XYZ with grid metadata per block (`i:`/`j:` indices, `E:` energy in
-Hartree) — see the OpenAvatar README for the full specification.
+Hartree) — see the CHEMVRSTRY README for the full specification.
 
 ## How it works
 
@@ -44,4 +44,4 @@ Hartree) — see the OpenAvatar README for the full specification.
   and deploys to Pages
 
 The app fetches:
-`https://hweiske.github.io/open-avatar-datasets/index.json`
+`https://hweiske.github.io/chemvrstry-datasets/index.json`
