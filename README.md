@@ -56,6 +56,10 @@ any constraint in `.traj`, selective dynamics in `POSCAR`. CIF and plain XYZ
 carry none — use `fix` (atom indices) or `fix_below` (fix every atom whose z
 is below this, in Å) in the sidecar instead.
 
+Systems built and saved in the app (MD Builder → *Save running system*)
+land on the server in `~/chemvrstry-md-systems/` as exactly such a
+structure + sidecar pair — copy both here to publish them.
+
 Large trajectories are stored via **Git LFS** (`raw/*.xyz` is tracked
 automatically by `.gitattributes`) — run `git lfs install` once on your
 machine before your first push, and clone with LFS available to get real
