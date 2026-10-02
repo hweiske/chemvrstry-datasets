@@ -1,0 +1,9 @@
+{
+  "name": "Ethanol",
+  "description": "Gas-phase ethanol, 300 K — the default demo",
+  "method": "MACE-OFF23",
+  "md": {
+    "calculator": "mace-off",
+    "temperature": 300
+  }
+}

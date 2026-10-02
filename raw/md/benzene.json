@@ -1,0 +1,9 @@
+{
+  "name": "Benzene",
+  "description": "Aromatic ring in the gas phase — try bending it",
+  "method": "MACE-OFF23",
+  "md": {
+    "calculator": "mace-off",
+    "temperature": 300
+  }
+}

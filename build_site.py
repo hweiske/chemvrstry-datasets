@@ -6,6 +6,16 @@ commit .xyz files to raw/. Optional metadata sidecar raw/<stem>.json:
 
     { "name": "Display Name", "description": "...", "method": "DFT" }
 
+raw/md/ holds systems for the interactive MD server instead: a structure in
+any format ASE reads (.xyz/.extxyz, .traj, .cif, .vasp/POSCAR, .pdb), whose
+sidecar may add an "md" block with the server's settings for it, e.g.
+
+    { "name": "CO on Cu(111)", "method": "MACE-MP",
+      "md": { "calculator": "mace-mp", "temperature": 300, "fix_below": 9.0 } }
+
+Constraints travel in the structure itself (extxyz move_mask, .traj, POSCAR
+selective dynamics) or come from "fix" / "fix_below" in the md block.
+
 Defaults: name = file stem, empty description/method, date = the file's last
 git commit date (stable, so device caches are only invalidated when the data
 actually changes). Gzip runs with mtime=0 for byte-identical rebuilds.
@@ -41,21 +51,33 @@ def safe_name(name: str) -> str:
     return "".join(c if c.isalnum() or c in "-_" else "_" for c in name)
 
 
+# Structure formats the MD server can read (via ase.io.read).
+MD_SUFFIXES = {".xyz", ".extxyz", ".traj", ".cif", ".vasp", ".pdb"}
+MD_NAMES = {"POSCAR", "CONTCAR"}
+
+
+def is_md_structure(path: Path) -> bool:
+    return path.is_file() and (path.suffix.lower() in MD_SUFFIXES or path.name in MD_NAMES)
+
+
 def build_dataset(xyz: Path, category: str, items: list) -> None:
     meta = {}
-    sidecar = xyz.with_suffix(".json")
+    sidecar = xyz.with_suffix(".json") if xyz.suffix else xyz.with_name(xyz.name + ".json")
     if sidecar.exists():
         meta = json.loads(sidecar.read_text())
 
     name = meta.get("name", xyz.stem)
     out_dir = SITE / "content" / category
     out_dir.mkdir(parents=True, exist_ok=True)
-    gz_path = out_dir / (safe_name(name) + ".xyz.gz")
+    # Keep the structure's own extension (the MD server picks the ASE
+    # reader from it); grids are always .xyz.
+    extension = (xyz.suffix.lower() or ".vasp") if category == "md" else ".xyz"
+    gz_path = out_dir / (safe_name(name) + extension + ".gz")
     with open(xyz, "rb") as src, open(gz_path, "wb") as out_file:
         with gzip.GzipFile(fileobj=out_file, mode="wb", compresslevel=9, mtime=0) as dst:
             shutil.copyfileobj(src, dst)
 
-    items.append({
+    item = {
         "name": name,
         "description": meta.get("description", ""),
         "date": git_date(xyz),
@@ -63,7 +85,11 @@ def build_dataset(xyz: Path, category: str, items: list) -> None:
         "url": f"content/{category}/{gz_path.name}",
         "method": meta.get("method", ""),
         "category": category,
-    })
+    }
+    if category == "md":
+        item["format"] = extension.lstrip(".")
+        item["md"] = meta.get("md", {})
+    items.append(item)
     print(f"[{category}] {xyz.name} -> {gz_path.name} ({gz_path.stat().st_size / 1e6:.1f} MB)")
 
 
@@ -72,8 +98,12 @@ def main() -> None:
 
     # Category subfolders (raw/pes, raw/stm, ...) set the entry category.
     for category_dir in sorted(d for d in RAW.iterdir() if d.is_dir()):
-        for xyz in sorted(category_dir.glob("*.xyz")):
-            build_dataset(xyz, category_dir.name, items)
+        if category_dir.name == "md":
+            files = sorted(f for f in category_dir.iterdir() if is_md_structure(f))
+        else:
+            files = sorted(category_dir.glob("*.xyz"))
+        for path in files:
+            build_dataset(path, category_dir.name, items)
 
     # Files directly in raw/ default to the PES category.
     for xyz in sorted(RAW.glob("*.xyz")):

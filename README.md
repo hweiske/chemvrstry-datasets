@@ -28,6 +28,34 @@ name:
 
 Without it, the filename is used and description/method stay empty.
 
+## MD systems — `raw/md/`
+
+Structures for the interactive MD server (Dynamics mode): any format ASE
+reads — `.xyz`/`.extxyz`, `.traj`, `.cif`, `.vasp`/`POSCAR`, `.pdb`. The
+server lists them in the app's **MD Setup** panel; picking one loads it for
+everyone connected. A sidecar `raw/md/<stem>.json` names it and can carry
+the server's settings for it:
+
+```json
+{ "name": "CO on Cu(111)", "description": "bottom two layers fixed",
+  "method": "MACE-MP",
+  "md": { "calculator": "mace-mp", "model": "medium", "temperature": 300,
+          "timestep": 0.5, "friction": 0.01, "vacuum": 4.0,
+          "fix": [0, 1, 2], "fix_below": 9.0 } }
+```
+
+`calculator`: `auto` (default — MACE-OFF for organic molecules, MACE-MP for
+everything else or anything periodic), `mace-off`, `mace-mp`, `emt`. Every
+setting except the structure can also be changed in the app while it runs.
+
+**Constraints are kept.** Whatever ASE reads from the file is applied in the
+simulation and shown in the app (fixed atoms are drawn dark and can't be
+grabbed): `move_mask` in extended XYZ (write it with
+`write(f, atoms, format="extxyz", columns=["symbols", "positions", "move_mask"])`),
+any constraint in `.traj`, selective dynamics in `POSCAR`. CIF and plain XYZ
+carry none — use `fix` (atom indices) or `fix_below` (fix every atom whose z
+is below this, in Å) in the sidecar instead.
+
 Large trajectories are stored via **Git LFS** (`raw/*.xyz` is tracked
 automatically by `.gitattributes`) — run `git lfs install` once on your
 machine before your first push, and clone with LFS available to get real

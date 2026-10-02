@@ -1,0 +1,10 @@
+{
+  "name": "CO on Cu(111)",
+  "description": "CO on top of a 3x3x4 Cu(111) slab; bottom two layers fixed",
+  "method": "MACE-MP",
+  "md": {
+    "calculator": "mace-mp",
+    "model": "medium",
+    "temperature": 300
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Au55 icosahedron",
+  "description": "Gold nanocluster, 55 atoms — melts if you heat it",
+  "method": "MACE-MP",
+  "md": {
+    "calculator": "mace-mp",
+    "model": "medium",
+    "temperature": 400,
+    "vacuum": 5.0
+  }
+}
